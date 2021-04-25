@@ -1,0 +1,28 @@
+Schemes:
+	A(X,Y,Z)
+	B(W,X)
+	C(G,H)
+
+Facts:
+	A('w','w','w').
+	B('m','x').
+	C('x','y').
+	A('u','i','o').
+	B('a','a').
+	C('b','b').
+	C('a','a').
+
+Rules:
+	A(X,X,X) :- B(X,X), C(X,X).
+	A(W,X,Y) :- B(W,X), C(X,Y).
+	B(X,Y) :- B(Y,X).
+	B(X,Y) :- C(X,Y).
+	C(X,Y) :- C(Y,X), B(Y,X).
+	
+Queries:
+	A(W,W,W)?
+	A(W,X,Y)?
+	B(X,X)?
+	C(X,Y)?
+	B(X,'x')?
+	B(X,Y)?
