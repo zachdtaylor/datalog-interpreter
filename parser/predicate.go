@@ -20,15 +20,3 @@ func (p *Predicate) addParameter(param Parameter) {
 func (p *Predicate) getParameters() []Parameter {
 	return p.parameters
 }
-
-type Scheme struct {
-	Predicate
-}
-
-type Fact struct {
-	Predicate
-}
-
-type Query struct {
-	Predicate
-}
