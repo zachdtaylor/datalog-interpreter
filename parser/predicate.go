@@ -9,8 +9,16 @@ func (p *Predicate) setID(id string) {
 	p.id = id
 }
 
+func (p *Predicate) getID() string {
+	return p.id
+}
+
 func (p *Predicate) addParameter(param Parameter) {
 	p.parameters = append(p.parameters, param)
+}
+
+func (p *Predicate) getParameters() []Parameter {
+	return p.parameters
 }
 
 type Scheme struct {
