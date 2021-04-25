@@ -1,4 +1,4 @@
-package main
+package parser
 
 type DatalogProgram struct {
 	schemes []Predicate

@@ -1,7 +1,11 @@
 package main
 
+import (
+	"github.com/zachtylr21/datalog-interpreter/parser"
+)
+
 func main() {
-	var program DatalogProgram
+	var program parser.DatalogProgram
 	program.Run("test.txt")
 
 	// fmt.Println(program.schemes)
