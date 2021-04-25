@@ -74,7 +74,17 @@ func (dp *DatalogParser) MatchSchemeList() {
 }
 
 func (dp *DatalogParser) MatchFact() {
-	template := dp.MatchPredicate(matchString)
+	matchFactString := func(dp *DatalogParser, predicate *Predicate) {
+		if dp.tokenizer.Current().tokenType == STRING {
+			dp.Match(STRING)
+			matchedValue := dp.tokenizer.Prev().value
+			predicate.addParameter(Parameter{matchedValue})
+			addDomain(dp.program, matchedValue)
+		} else {
+			dp.Fail(STRING)
+		}
+	}
+	template := dp.MatchPredicate(matchFactString)
 	dp.Match(PERIOD)
 	addFact(dp.program, template)
 }
@@ -192,15 +202,8 @@ func matchID(dp *DatalogParser, predicate *Predicate) {
 	if dp.tokenizer.Current().tokenType == ID {
 		dp.Match(ID)
 		predicate.addParameter(Parameter{dp.tokenizer.Prev().value})
-	}
-}
-
-func matchString(dp *DatalogParser, predicate *Predicate) {
-	if dp.tokenizer.Current().tokenType == STRING {
-		dp.Match(STRING)
-		matchedValue := dp.tokenizer.Prev().value
-		predicate.addParameter(Parameter{matchedValue})
-		addDomain(dp.program, matchedValue)
+	} else {
+		dp.Fail(ID)
 	}
 }
 
