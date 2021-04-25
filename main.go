@@ -6,6 +6,7 @@ import (
 
 func main() {
 	var program parser.DatalogProgram
+	program.Init()
 	program.Run("test.txt")
 
 	// fmt.Println(program.schemes)

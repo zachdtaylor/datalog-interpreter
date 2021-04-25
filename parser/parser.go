@@ -54,11 +54,12 @@ func (dp *DatalogParser) Run() {
 	dp.MatchQuery()
 	dp.MatchQueryList()
 
-	fmt.Println("Parse successful:")
+	fmt.Println("Parse successful!")
 	fmt.Println(fmt.Sprintf("  %d schemes", len(dp.program.schemes)))
 	fmt.Println(fmt.Sprintf("  %d facts", len(dp.program.facts)))
 	fmt.Println(fmt.Sprintf("  %d rules", len(dp.program.rules)))
 	fmt.Println(fmt.Sprintf("  %d queries", len(dp.program.queries)))
+	fmt.Println(fmt.Sprintf("  Domain: %v", dp.program.domain.Array()))
 }
 
 func (dp *DatalogParser) MatchScheme() {
@@ -183,6 +184,10 @@ func addQuery(p *DatalogProgram, query Predicate) {
 	p.queries = append(p.queries, query)
 }
 
+func addDomain(p *DatalogProgram, value string) {
+	p.domain.Add(value)
+}
+
 func matchID(dp *DatalogParser, predicate *Predicate) {
 	if dp.tokenizer.Current().tokenType == ID {
 		dp.Match(ID)
@@ -193,7 +198,9 @@ func matchID(dp *DatalogParser, predicate *Predicate) {
 func matchString(dp *DatalogParser, predicate *Predicate) {
 	if dp.tokenizer.Current().tokenType == STRING {
 		dp.Match(STRING)
-		predicate.addParameter(Parameter{dp.tokenizer.Prev().value})
+		matchedValue := dp.tokenizer.Prev().value
+		predicate.addParameter(Parameter{matchedValue})
+		addDomain(dp.program, matchedValue)
 	}
 }
 
