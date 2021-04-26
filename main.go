@@ -12,6 +12,10 @@ func main() {
 	program.Init()
 	program.Run("test.txt")
 
+	graph, revGraph := program.RuleDependencies()
+	fmt.Println(graph.String())
+	fmt.Println(revGraph.String())
+
 	var database database.Database
 	database.Create(program)
 

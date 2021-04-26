@@ -2,7 +2,7 @@ package parser
 
 type Rule struct {
 	head       Predicate
-	predicates []Predicate
+	Predicates []Predicate
 }
 
 func (r *Rule) setHead(predicate Predicate) {
@@ -10,5 +10,9 @@ func (r *Rule) setHead(predicate Predicate) {
 }
 
 func (r *Rule) setPredicates(predicates []Predicate) {
-	r.predicates = predicates
+	r.Predicates = predicates
+}
+
+func (r *Rule) ID() string {
+	return r.head.id
 }

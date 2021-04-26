@@ -27,3 +27,27 @@ func (p *DatalogProgram) Schemes() []Scheme {
 func (p *DatalogProgram) Facts() []Fact {
 	return p.facts
 }
+
+func (p *DatalogProgram) RuleDependencies() (util.Graph, util.Graph) {
+	var graph, revGraph util.Graph
+	graph.Init()
+	revGraph.Init()
+
+	for k, rule := range p.rules {
+		graph.AddNode(k)
+		revGraph.AddNode(k)
+
+		for _, pred := range rule.Predicates {
+			predID := pred.GetID()
+			for j, rule2 := range p.rules {
+				ruleID := rule2.ID()
+				if ruleID == predID {
+					graph.AddDependency(k, j)
+					revGraph.AddDependency(j, k)
+				}
+			}
+		}
+	}
+
+	return graph, revGraph
+}

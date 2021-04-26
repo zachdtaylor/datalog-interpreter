@@ -19,3 +19,22 @@ func (s *StringSet) Array() []string {
 	}
 	return keys
 }
+
+type IntSet struct {
+	values map[int]bool
+}
+
+func (s *IntSet) Add(value int) {
+	if s.values == nil {
+		s.values = make(map[int]bool)
+	}
+	s.values[value] = true
+}
+
+func (s *IntSet) Array() []int {
+	keys := make([]int, 0, len(s.values))
+	for k := range s.values {
+		keys = append(keys, k)
+	}
+	return keys
+}
