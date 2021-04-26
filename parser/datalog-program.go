@@ -3,10 +3,10 @@ package parser
 import "github.com/zachtylr21/datalog-interpreter/util"
 
 type DatalogProgram struct {
-	schemes []Predicate
-	facts   []Predicate
+	schemes []Scheme
+	facts   []Fact
 	rules   []Rule
-	queries []Predicate
+	queries []Query
 	domain  util.StringSet
 }
 
@@ -18,4 +18,12 @@ func (p *DatalogProgram) Run(fileName string) {
 	var parser DatalogParser
 	parser.Init(p, fileName)
 	parser.Run()
+}
+
+func (p *DatalogProgram) Schemes() []Scheme {
+	return p.schemes
+}
+
+func (p *DatalogProgram) Facts() []Fact {
+	return p.facts
 }

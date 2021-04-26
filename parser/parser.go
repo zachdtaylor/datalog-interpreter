@@ -63,7 +63,8 @@ func (dp *DatalogParser) Run() {
 }
 
 func (dp *DatalogParser) MatchScheme() {
-	addScheme(dp.program, dp.MatchPredicate(matchID))
+	predicate := dp.MatchPredicate(matchID)
+	addScheme(dp.program, Scheme{predicate})
 }
 
 func (dp *DatalogParser) MatchSchemeList() {
@@ -84,9 +85,9 @@ func (dp *DatalogParser) MatchFact() {
 			dp.Fail(STRING)
 		}
 	}
-	template := dp.MatchPredicate(matchFactString)
+	predicate := dp.MatchPredicate(matchFactString)
 	dp.Match(PERIOD)
-	addFact(dp.program, template)
+	addFact(dp.program, Fact{predicate})
 }
 
 func (dp *DatalogParser) MatchFactList() {
@@ -97,16 +98,16 @@ func (dp *DatalogParser) MatchFactList() {
 }
 
 func (dp *DatalogParser) MatchRule() {
-	var template Rule
+	var rule Rule
 
-	template.setHead(dp.MatchPredicate(matchID))
+	rule.setHead(dp.MatchPredicate(matchID))
 	dp.Match(COLON_DASH)
 	predicate := dp.MatchPredicate(matchIDOrString)
 	predicateList := dp.MatchPredicateList(matchIDOrString, []Predicate{predicate})
-	template.setPredicates(predicateList)
+	rule.setPredicates(predicateList)
 	dp.Match(PERIOD)
 
-	addRule(dp.program, template)
+	addRule(dp.program, rule)
 }
 
 func (dp *DatalogParser) MatchRuleList() {
@@ -117,9 +118,9 @@ func (dp *DatalogParser) MatchRuleList() {
 }
 
 func (dp *DatalogParser) MatchQuery() {
-	template := dp.MatchPredicate(matchIDOrString)
+	predicate := dp.MatchPredicate(matchIDOrString)
 	dp.Match(Q_MARK)
-	addQuery(dp.program, template)
+	addQuery(dp.program, Query{predicate})
 }
 
 func (dp *DatalogParser) MatchQueryList() {
@@ -130,16 +131,16 @@ func (dp *DatalogParser) MatchQueryList() {
 }
 
 func (dp *DatalogParser) MatchPredicate(matchParameterType MatchParameterType) Predicate {
-	var template Predicate
+	var predicate Predicate
 
 	dp.Match(ID)
-	template.setID(dp.tokenizer.Prev().value)
+	predicate.setID(dp.tokenizer.Prev().value)
 	dp.Match(LEFT_PAREN)
-	matchParameterType(dp, &template)
-	dp.MatchParameterList(matchParameterType, &template)
+	matchParameterType(dp, &predicate)
+	dp.MatchParameterList(matchParameterType, &predicate)
 	dp.Match(RIGHT_PAREN)
 
-	return template
+	return predicate
 }
 
 func (dp *DatalogParser) MatchPredicateList(matchParameterType MatchParameterType, list []Predicate) []Predicate {
@@ -178,11 +179,11 @@ func (dp *DatalogParser) Fail(expected TokenType) {
 	log.Fatal(err)
 }
 
-func addScheme(p *DatalogProgram, scheme Predicate) {
+func addScheme(p *DatalogProgram, scheme Scheme) {
 	p.schemes = append(p.schemes, scheme)
 }
 
-func addFact(p *DatalogProgram, fact Predicate) {
+func addFact(p *DatalogProgram, fact Fact) {
 	p.facts = append(p.facts, fact)
 }
 
@@ -190,7 +191,7 @@ func addRule(p *DatalogProgram, rule Rule) {
 	p.rules = append(p.rules, rule)
 }
 
-func addQuery(p *DatalogProgram, query Predicate) {
+func addQuery(p *DatalogProgram, query Query) {
 	p.queries = append(p.queries, query)
 }
 
