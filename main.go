@@ -15,6 +15,10 @@ func main() {
 	fmt.Println(graph.String())
 	fmt.Println(revGraph.String())
 
+	stack := revGraph.DFSForest()
+
+	fmt.Println(stack.Values())
+
 	var database database.Database
 	database.Create(program)
 
