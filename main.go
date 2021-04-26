@@ -18,7 +18,7 @@ func main() {
 	var database database.Database
 	database.Create(program)
 
-	fmt.Println(database.Relations())
+	fmt.Println(database.Relations)
 
 	// fmt.Println(program.schemes)
 	// fmt.Println(program.facts)

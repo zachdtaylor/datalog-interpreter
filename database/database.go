@@ -5,11 +5,11 @@ import (
 )
 
 type Database struct {
-	relations map[string]Relation
+	Relations map[string]Relation
 }
 
 func (d *Database) Create(dp parser.DatalogProgram) {
-	d.relations = make(map[string]Relation)
+	d.Relations = make(map[string]Relation)
 
 	for _, scheme := range dp.Schemes() {
 		relationID := scheme.GetID()
@@ -21,10 +21,6 @@ func (d *Database) Create(dp parser.DatalogProgram) {
 			}
 		}
 		relation := Relation{scheme, tuples}
-		d.relations[relation.Name()] = relation
+		d.Relations[relation.Name()] = relation
 	}
-}
-
-func (d *Database) Relations() map[string]Relation {
-	return d.relations
 }
