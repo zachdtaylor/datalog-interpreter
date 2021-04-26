@@ -9,7 +9,6 @@ import (
 
 func main() {
 	var program parser.DatalogProgram
-	program.Init()
 	program.Run("test.txt")
 
 	graph, revGraph := program.RuleDependencies()

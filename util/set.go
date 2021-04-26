@@ -4,11 +4,10 @@ type StringSet struct {
 	values map[string]bool
 }
 
-func (s *StringSet) Init() {
-	s.values = make(map[string]bool)
-}
-
 func (s *StringSet) Add(value string) {
+	if s.values == nil {
+		s.values = make(map[string]bool)
+	}
 	s.values[value] = true
 }
 
