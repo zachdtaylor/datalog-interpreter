@@ -78,16 +78,29 @@ func (g *Graph) String() string {
 	return graph
 }
 
+/*
+  Computes the strongly connected components (SCCs) of the given graph.
+	SCCs can be computed using Kosaraju's algorithm:
+	  1. Perform depth first search forest on the graph and keep track of
+		   the finish times of each node.
+		2. Compute the transpose graph
+		3. For each node n in descending finish time order:
+		   - If n has been visited in the transpose graph, continue to next loop.
+		   - Perform depth first search on the transpose graph starting from node n,
+			   keeping track of which nodes were visited.
+			 - The set of nodes visited is an SCC. Store the SCC, and continue.
+*/
 func StronglyConnectedComponents(graph Graph) [][]int {
-	transpose := Transpose(graph)
 	finishOrder := graph.DFSForest()
+	transpose := Transpose(graph)
 	var sccs [][]int
 	for range finishOrder.Values() {
 		startNode := finishOrder.Pop()
-		scc := transpose.DepthFirstSearch(startNode)
-		if len(scc.Values()) != 0 {
-			sccs = append(sccs, scc.Values())
+		if transpose.dependencyList[startNode].visited {
+			continue
 		}
+		scc := transpose.DepthFirstSearch(startNode)
+		sccs = append(sccs, scc.Values())
 	}
 	return sccs
 }
