@@ -1,6 +1,9 @@
 package parser
 
-import "github.com/zachtylr21/datalog-interpreter/util"
+import (
+	"github.com/zachtylr21/datalog-interpreter/graph"
+	"github.com/zachtylr21/datalog-interpreter/util"
+)
 
 type DatalogProgram struct {
 	schemes []Scheme
@@ -24,14 +27,12 @@ func (p *DatalogProgram) Facts() []Fact {
 	return p.facts
 }
 
-func (p *DatalogProgram) RuleDependencies() (util.Graph, util.Graph) {
-	var graph, revGraph util.Graph
+func (p *DatalogProgram) RuleDependencies() graph.Graph {
+	var graph graph.Graph
 	graph.Init()
-	revGraph.Init()
 
 	for k, rule := range p.rules {
 		graph.AddNode(k)
-		revGraph.AddNode(k)
 
 		for _, pred := range rule.Predicates {
 			predID := pred.GetID()
@@ -39,11 +40,10 @@ func (p *DatalogProgram) RuleDependencies() (util.Graph, util.Graph) {
 				ruleID := rule2.ID()
 				if ruleID == predID {
 					graph.AddDependency(k, j)
-					revGraph.AddDependency(j, k)
 				}
 			}
 		}
 	}
 
-	return graph, revGraph
+	return graph
 }

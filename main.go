@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/zachtylr21/datalog-interpreter/database"
+	"github.com/zachtylr21/datalog-interpreter/graph"
 	"github.com/zachtylr21/datalog-interpreter/parser"
 )
 
@@ -11,18 +12,17 @@ func main() {
 	var program parser.DatalogProgram
 	program.Run("test.txt")
 
-	graph, revGraph := program.RuleDependencies()
-	fmt.Println(graph.String())
-	fmt.Println(revGraph.String())
+	ruleGraph := program.RuleDependencies()
+	fmt.Println(ruleGraph.String())
 
-	stack := revGraph.DFSForest()
+	sccs := graph.StronglyConnectedComponents(ruleGraph)
 
-	fmt.Println(stack.Values())
+	fmt.Println(sccs)
 
 	var database database.Database
 	database.Create(program)
 
-	fmt.Println(database.Relations)
+	// fmt.Println(database.Relations)
 
 	// fmt.Println(program.schemes)
 	// fmt.Println(program.facts)

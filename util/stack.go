@@ -15,6 +15,6 @@ func (s *Stack) Pop() int {
 	return value
 }
 
-func (s *Stack) Values() []int {
+func (s Stack) Values() []int {
 	return s.stack
 }

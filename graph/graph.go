@@ -1,18 +1,10 @@
-package util
+package graph
 
 import (
 	"strconv"
+
+	"github.com/zachtylr21/datalog-interpreter/util"
 )
-
-type Node struct {
-	value        int
-	dependencies IntSet
-	visited      bool
-}
-
-func (n *Node) AddDependency(value int) {
-	n.dependencies.Add(value)
-}
 
 type Graph struct {
 	dependencyList map[int]*Node
@@ -40,18 +32,19 @@ func (g *Graph) AddDependency(value, dep int) {
 	Returns a stack which holds the nodes in order of their finish times, from
 	highest (top of the stack) to lowest.
 */
-func (g *Graph) DepthFirstSearch(node int) Stack {
-	stack := Stack{}
+func (g *Graph) DepthFirstSearch(node int) util.Stack {
+	stack := util.Stack{}
 	g.dfs(node, &stack)
 	return stack
 }
 
-func (g *Graph) dfs(node int, stack *Stack) {
+func (g *Graph) dfs(node int, stack *util.Stack) {
 	if g.dependencyList[node].visited {
 		return
 	}
 	g.dependencyList[node].visited = true
-	for node := range g.dependencyList[node].dependencies.values {
+	dependencies := g.dependencyList[node].dependencies.Array()
+	for _, node := range dependencies {
 		if !g.dependencyList[node].visited {
 			g.dfs(node, stack)
 		}
@@ -65,8 +58,8 @@ func (g *Graph) dfs(node int, stack *Stack) {
 	Returns a stack which holds the nodes in order of their finish times, from
 	highest (top of the stack) to lowest.
 */
-func (g *Graph) DFSForest() Stack {
-	stack := Stack{}
+func (g *Graph) DFSForest() util.Stack {
+	stack := util.Stack{}
 	for node := range g.dependencyList {
 		g.dfs(node, &stack)
 	}
@@ -75,12 +68,38 @@ func (g *Graph) DFSForest() Stack {
 
 func (g *Graph) String() string {
 	graph := ""
-	for _, node := range g.dependencyList {
-		graph += strconv.Itoa(node.value) + ":"
+	for id, node := range g.dependencyList {
+		graph += strconv.Itoa(id) + ":"
 		for _, dep := range node.dependencies.Array() {
 			graph += strconv.Itoa(dep) + ","
 		}
 		graph += "\n"
 	}
 	return graph
+}
+
+func StronglyConnectedComponents(graph Graph) [][]int {
+	transpose := Transpose(graph)
+	finishOrder := graph.DFSForest()
+	var sccs [][]int
+	for range finishOrder.Values() {
+		startNode := finishOrder.Pop()
+		scc := transpose.DepthFirstSearch(startNode)
+		if len(scc.Values()) != 0 {
+			sccs = append(sccs, scc.Values())
+		}
+	}
+	return sccs
+}
+
+func Transpose(graph Graph) Graph {
+	var transpose Graph
+	transpose.Init()
+	for id, node := range graph.dependencyList {
+		transpose.AddNode(id)
+		for _, dep := range node.dependencies.Array() {
+			transpose.AddDependency(dep, id)
+		}
+	}
+	return transpose
 }
