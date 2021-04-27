@@ -11,6 +11,7 @@ Facts:
 	B('a','a').
 	C('b','b').
 	C('a','a').
+	C('x', 'b').
 
 Rules:
 	A(X,X,X) :- B(X,X), C(X,X).

@@ -20,7 +20,7 @@ func (d *Database) Create(dp parser.DatalogProgram) {
 				tuples = append(tuples, tuple)
 			}
 		}
-		relation := Relation{scheme, tuples}
-		d.Relations[relation.Name()] = relation
+		relation := Relation{scheme.GetID(), scheme.GetParameterValues(), tuples}
+		d.Relations[relation.Name] = relation
 	}
 }

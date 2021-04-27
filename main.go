@@ -19,10 +19,12 @@ func main() {
 
 	fmt.Println(sccs)
 
-	var database database.Database
-	database.Create(program)
+	var db database.Database
+	db.Create(program)
 
-	// fmt.Println(database.Relations)
+	C := db.Relations["C"]
+	fmt.Println(C.Select("G", C.EqualsColumn("H")))
+	fmt.Println(C.Select("H", C.Equals("'y'")))
 
 	// fmt.Println(program.schemes)
 	// fmt.Println(program.facts)
