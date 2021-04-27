@@ -55,11 +55,6 @@ func (dp *DatalogParser) Run() {
 	dp.MatchQueryList()
 
 	fmt.Println("Parse successful!")
-	fmt.Println(fmt.Sprintf("  %d schemes", len(dp.program.schemes)))
-	fmt.Println(fmt.Sprintf("  %d facts", len(dp.program.facts)))
-	fmt.Println(fmt.Sprintf("  %d rules", len(dp.program.rules)))
-	fmt.Println(fmt.Sprintf("  %d queries", len(dp.program.queries)))
-	fmt.Println(fmt.Sprintf("  Domain: %v", dp.program.domain.Array()))
 }
 
 func (dp *DatalogParser) MatchScheme() {
