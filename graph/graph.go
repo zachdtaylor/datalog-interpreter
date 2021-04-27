@@ -80,15 +80,37 @@ func (g *Graph) String() string {
 
 /*
   Computes the strongly connected components (SCCs) of the given graph.
-	SCCs can be computed using Kosaraju's algorithm:
-	  1. Perform depth first search forest on the graph and keep track of
-		   the finish times of each node.
-		2. Compute the transpose graph
-		3. For each node n in descending finish time order:
-		   - If n has been visited in the transpose graph, continue to next loop.
-		   - Perform depth first search on the transpose graph starting from node n,
-			   keeping track of which nodes were visited.
-			 - The set of nodes visited is an SCC. Store the SCC, and continue.
+
+	SCCs can be computed using Kosaraju's algorithm, which is what we use here.
+	This algorithm works because of the following fact:
+	  > If we do DFS forest on a graph, the finish time of a node that connects to other
+		> SCCs will always be greater than the finish time of nodes in the other SCC.
+	To illustrate this fact, say we have the following graph:
+	  0: 2, 3
+		1: 0
+		2: 1
+		3: 4
+		4:
+	The SCCs are G1: [0, 1, 2], G2: [3], and G3: [4], and observe that 0 connects from
+	G1 to G2 and 3 connects from G2 to G3.
+	Say we start DFS forest at node 3. The traversal path is 3 -> 4, so the nodes in order
+	of finish time (lowest to highest) is [4, 3]. Then say we do another pass starting at
+	node 1. A traversal path is 1 -> 0 -> 2, so the finish time order is [2, 0, 1]. The
+	complete finish time order is [4, 3, 2, 0, 1]. Notice that 0 has a greater finish time
+	than 3 and 3 has a greater finish time than 4.
+
+	Now to understand why the algorithm works, consider the reverse graph:
+	  0: 1
+		1: 2
+		2: 0
+		3: 0
+		4: 3
+	Notice that [0, 1, 2] is a sink in this graph, and if we remove those nodes, then
+	[3] is a sink in the remaining graph, and if we remove 3 as well, then [4] is a sink
+	in the remaining graph. So, getting the SCCs is as simple as doing DFS 3 times on
+	the reverse graph starting with either 0, 1, or 2 first, then starting with 3, then
+	starting with 4. The complete finish time order from the DFS forest on the original
+	graph is the exact order we need.
 */
 func StronglyConnectedComponents(graph Graph) [][]int {
 	finishOrder := graph.DFSForest()
