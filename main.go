@@ -13,7 +13,6 @@ func main() {
 	program.Run("test.txt")
 
 	ruleGraph := program.RuleDependencies()
-	fmt.Println(ruleGraph.String())
 
 	sccs := graph.StronglyConnectedComponents(ruleGraph)
 
