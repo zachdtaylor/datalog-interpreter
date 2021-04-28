@@ -8,7 +8,7 @@ import (
 	"github.com/zachtylr21/datalog-interpreter/util"
 )
 
-type Condition func(Tuple, string) bool
+type Condition func(Relation, Tuple, string) bool
 
 type Database struct {
 	Relations map[string]Relation
@@ -34,7 +34,7 @@ func (d *Database) Create(dp parser.DatalogProgram) {
 /*
 	Selects rows from the given relation.
 	The function signature reads like:
-		SELECT * FROM from WHERE condition(row, from.column)
+		SELECT * FROM from WHERE from.column condition(row, from.column)
 */
 func Select(from Relation, column string, condition Condition) (Relation, error) {
 	idx, err := util.IndexOf(column, from.Schema)
@@ -44,7 +44,7 @@ func Select(from Relation, column string, condition Condition) (Relation, error)
 	}
 	tuples := []Tuple{}
 	for _, tuple := range from.Tuples {
-		if condition(tuple, tuple[idx]) {
+		if condition(from, tuple, tuple[idx]) {
 			tuples = append(tuples, tuple)
 		}
 	}
@@ -53,16 +53,37 @@ func Select(from Relation, column string, condition Condition) (Relation, error)
 }
 
 func Equals(value string) Condition {
-	condition := func(row Tuple, compareTo string) bool {
+	condition := func(r Relation, row Tuple, compareTo string) bool {
 		return compareTo == value
 	}
 	return condition
 }
 
-func EqualsColumn(r Relation, column string) Condition {
-	idx, _ := util.IndexOf(column, r.Schema)
-	condition := func(row Tuple, compareTo string) bool {
+/*
+  This method is ineffecient. If performance is an issue, consider
+	using EqualsColumnIdx
+*/
+func EqualsColumn(column string) Condition {
+	condition := func(r Relation, row Tuple, compareTo string) bool {
+		idx, _ := util.IndexOf(column, r.Schema)
 		return row[idx] == compareTo
+	}
+	return condition
+}
+
+/*
+  A more time-effecient version of EqualsColumn that does not need to look up
+	the index of the column for each row, in exchange for the user computing the
+	index beforehand.
+	Example:
+		C := db.Relations["C"]
+		Select(C, "G", EqualsColumn("H")) // <- this is slower
+		idx := util.IndexOf("H", C.Schema)
+		Select(C, "G", EqualsColumnIdx(idx)) // <- this is faster!
+*/
+func EqualsColumnIdx(column int) Condition {
+	condition := func(r Relation, row Tuple, compareTo string) bool {
+		return row[column] == compareTo
 	}
 	return condition
 }

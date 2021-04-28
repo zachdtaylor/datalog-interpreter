@@ -19,7 +19,7 @@ func main() {
 	db.Create(program)
 
 	C := db.Relations["C"]
-	s1, _ := Select(C, "G", EqualsColumn(C, "H"))
+	s1, _ := Select(C, "G", EqualsColumn("H"))
 	s2, _ := Select(C, "H", Equals("'y'"))
 	fmt.Println(s1.Tuples)
 	fmt.Println(s2.Tuples)
