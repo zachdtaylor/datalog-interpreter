@@ -3,8 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/zachtylr21/datalog-interpreter/database"
-	"github.com/zachtylr21/datalog-interpreter/graph"
+	. "github.com/zachtylr21/datalog-interpreter/database"
 	"github.com/zachtylr21/datalog-interpreter/parser"
 )
 
@@ -12,18 +11,18 @@ func main() {
 	var program parser.DatalogProgram
 	program.Run("test.txt")
 
-	ruleGraph := program.RuleDependencies()
+	// ruleGraph := program.RuleDependencies()
 
-	sccs := graph.StronglyConnectedComponents(ruleGraph)
+	// sccs := graph.StronglyConnectedComponents(ruleGraph)
 
-	fmt.Println(sccs)
-
-	var db database.Database
+	var db Database
 	db.Create(program)
 
 	C := db.Relations["C"]
-	fmt.Println(C.Select("G", C.EqualsColumn("H")))
-	fmt.Println(C.Select("H", C.Equals("'y'")))
+	s1, _ := Select(C, "G", EqualsColumn(C, "H"))
+	s2, _ := Select(C, "H", Equals("'y'"))
+	fmt.Println(s1.Tuples)
+	fmt.Println(s2.Tuples)
 
 	// fmt.Println(program.schemes)
 	// fmt.Println(program.facts)
