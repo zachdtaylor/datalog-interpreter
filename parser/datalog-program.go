@@ -44,6 +44,5 @@ func (p *DatalogProgram) RuleDependencies() graph.Graph {
 			}
 		}
 	}
-
 	return graph
 }
