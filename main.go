@@ -11,29 +11,15 @@ func main() {
 	var program parser.DatalogProgram
 	program.Run("test.txt")
 
-	// ruleGraph := program.RuleDependencies()
-
-	// sccs := graph.StronglyConnectedComponents(ruleGraph)
-
 	var db Database
 	db.Create(program)
 
 	B := db.Relations["B"]
 	A := db.Relations["A"]
 	C := db.Relations["C"]
-	fmt.Println(C)
 
-	fmt.Println(Project(C, []string{"H"}))
+	fmt.Println(Project(B, []string{"W"}))
 
-	R := Join(A, B)
+	R := Join(A, C)
 	fmt.Println(R)
-	// s1, _ := Select(C, "G", EqualsColumn("H"))
-	// s2, _ := Select(C, "H", Equals("'y'"))
-	// fmt.Println(s1.Tuples)
-	// fmt.Println(s2.Tuples)
-
-	// fmt.Println(program.schemes)
-	// fmt.Println(program.facts)
-	// fmt.Println(program.rules)
-	// fmt.Println(program.queries)
 }
