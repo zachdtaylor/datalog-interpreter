@@ -3,6 +3,7 @@ package database
 import (
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/zachtylr21/datalog-interpreter/parser"
 	"github.com/zachtylr21/datalog-interpreter/util"
@@ -31,10 +32,14 @@ func (d *Database) Create(dp parser.DatalogProgram) {
 	}
 }
 
+func Rename(r Relation, schema []string) Relation {
+	return Relation{r.Name, schema, r.Tuples}
+}
+
 /*
 	Selects rows from the given relation.
 	The function signature reads like:
-		SELECT * FROM from WHERE from.column condition(row, from.column)
+		SELECT * FROM from WHERE from.column condition
 */
 func Select(from Relation, column string, condition Condition) (Relation, error) {
 	idx, err := util.IndexOf(column, from.Schema)
@@ -65,7 +70,10 @@ func Equals(value string) Condition {
 */
 func EqualsColumn(column string) Condition {
 	condition := func(r Relation, row Tuple, compareTo string) bool {
-		idx, _ := util.IndexOf(column, r.Schema)
+		idx, err := util.IndexOf(column, r.Schema)
+		if err != nil {
+			log.Fatal(errors.New(fmt.Sprintf("Column %s does not exist on relation %s", column, r.Name)))
+		}
 		return row[idx] == compareTo
 	}
 	return condition
