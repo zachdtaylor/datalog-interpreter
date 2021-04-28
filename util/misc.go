@@ -1,12 +1,10 @@
 package util
 
-import "errors"
-
-func IndexOf(value string, slice []string) (int, error) {
+func IndexOf(value string, slice []string) int {
 	for k, str := range slice {
 		if str == value {
-			return k, nil
+			return k
 		}
 	}
-	return -1, errors.New("Value does not exist in slice")
+	return -1
 }

@@ -18,11 +18,19 @@ func main() {
 	var db Database
 	db.Create(program)
 
+	B := db.Relations["B"]
+	A := db.Relations["A"]
 	C := db.Relations["C"]
-	s1, _ := Select(C, "G", EqualsColumn("H"))
-	s2, _ := Select(C, "H", Equals("'y'"))
-	fmt.Println(s1.Tuples)
-	fmt.Println(s2.Tuples)
+	fmt.Println(C)
+
+	fmt.Println(Project(C, []string{"H"}))
+
+	R := Join(A, B)
+	fmt.Println(R)
+	// s1, _ := Select(C, "G", EqualsColumn("H"))
+	// s2, _ := Select(C, "H", Equals("'y'"))
+	// fmt.Println(s1.Tuples)
+	// fmt.Println(s2.Tuples)
 
 	// fmt.Println(program.schemes)
 	// fmt.Println(program.facts)
