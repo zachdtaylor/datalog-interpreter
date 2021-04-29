@@ -13,7 +13,7 @@ func tokenizeString(s *scanner.Scanner) (TokenType, string) {
 		if string(s.Peek()) == "'" {
 			str += string(s.Next())
 			if string(s.Peek()) == "'" { // '' escapes the ' character
-				str += string(s.Next())
+				s.Next()
 			} else {
 				break
 			}
